@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: resume_analyzer
+    ports:
+      - "3306:3306"
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  app:
+    build: .
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+      - ollama
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/resume_analyzer
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+volumes:
+  ollama_data:
